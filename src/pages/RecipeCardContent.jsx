@@ -8,6 +8,7 @@ export default function RecipeCardContent() {
     <section className="pt-30">
       <h2>{title}</h2>
       <p>{about}</p>
+      {console.log("You clicked the content page.")}
     </section>
   );
 }

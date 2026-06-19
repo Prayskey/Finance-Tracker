@@ -1,9 +1,9 @@
 import Header from "./components/Header";
-import RecipeResults from "./components/RecipeResults";
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import PageNotFound from "./pages/PageNotFound";
+import RecipeResults from "./components/RecipeResults";
 import RecipeCardContent from "./pages/RecipeCardContent";
 
 function App() {

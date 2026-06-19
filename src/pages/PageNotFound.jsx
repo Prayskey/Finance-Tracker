@@ -1,3 +1,3 @@
 export default function PageNotFound() {
-  return <h2 className="text-9xl pt-20">Page Not Found</h2>
+  return <h2 className="pt-20 text-9xl">Page Not Found</h2>;
 }

@@ -1,25 +1,26 @@
 import RecipeCard from "./RecipeCard";
 import { recipes } from "../Recipes/recipes";
+import { Link } from "react-router-dom";
 
 export default function RecipeResults() {
   return (
-    <main className="mt-32 px-6 max-w-7xl mx-auto pb-20">
+    <main className="mx-auto mt-32 max-w-7xl px-6 pb-20">
       {/* Result Details */}
-      <section className="flex justify-between items-end mb-12">
+      <section className="mb-12 flex items-end justify-between">
         <div className="flex flex-col">
-          <h2 className="font-black text-2xl tracking-tight text-gray-900">
+          <h2 className="text-2xl font-black tracking-tight text-gray-900">
             Recipe Result
           </h2>
-          <div className="flex space-x-4 items-center mt-2 text-gray-500 font-medium text-sm tracking-tight">
+          <div className="mt-2 flex items-center space-x-4 text-sm font-medium tracking-tight text-gray-500">
             <p>{recipes.length} recipes found</p>
             <span className="text-gray-200">|</span>
-            <p className="text-amber-600 hover:underline cursor-pointer transition-all">
+            <p className="cursor-pointer text-amber-600 transition-all hover:underline">
               Edit Ingredients & Restrictions
             </p>
           </div>
         </div>
         <div>
-          <button className="font-bold flex items-center space-x-1.5 px-4 py-2 rounded-2xl bg-white border border-gray-200 shadow-sm cursor-pointer hover:border-amber-500 hover:text-amber-600 transition-all duration-200 group">
+          <button className="group flex cursor-pointer items-center space-x-1.5 rounded-2xl border border-gray-200 bg-white px-4 py-2 font-bold shadow-sm transition-all duration-200 hover:border-amber-500 hover:text-amber-600">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5 text-gray-400 group-hover:text-amber-500"
@@ -39,17 +40,23 @@ export default function RecipeResults() {
         </div>
       </section>
       {/* Recipes Result */}
-      <section className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <section className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {recipes.map((recipe) => {
+          const slug = recipe.title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
           return (
-            <RecipeCard
+            <Link
+              to={`/${slug}/${recipe.id}`}
+              state={{ recipe }}
               key={recipe.id}
-              imageSrc={recipe.imageSrc}
-              title={recipe.title}
-              about={recipe.about}
-              rating={recipe.rating}
-              id={recipe.id}
-            />
+            >
+              <RecipeCard
+                imageSrc={recipe.imageSrc}
+                title={recipe.title}
+                about={recipe.about}
+                rating={recipe.rating}
+                id={recipe.id}
+              />
+            </Link>
           );
         })}
       </section>
