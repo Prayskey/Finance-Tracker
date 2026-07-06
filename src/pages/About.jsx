@@ -1,7 +1,0 @@
-export default function About() {
-  return (
-    <section className="mt-20 text-4xl font-bold">
-      This is the About page
-    </section>
-  );
-}
