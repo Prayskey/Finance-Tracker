@@ -39,7 +39,7 @@ const transactionData = [
     paymentMethod: "Bank Transfer",
     currentBalance: 335.0,
     image:
-      "https://images.unsplash.com/photo-1563227812-0ea4c22e6cc8?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3Dss",
+      "https://images.unsplash.com/photo-1563227812-0ea4c22e6cc8?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
   {
     id: 5,
@@ -53,22 +53,45 @@ const transactionData = [
   },
 ];
 
-export default function Transactions() {
+// Maps sidebar account IDs (Navbar.jsx) to matching payment methods.
+// TODO: replace with a real accountId field on each transaction once
+// the backend model exists — matching on paymentMethod string is fragile.
+const accountIdToPaymentMethod = {
+  1: "Cash",
+  2: "Credit Card",
+  3: "Bills",
+  4: "Business",
+};
+
+const formatCurrency = (value) =>
+  Math.abs(value).toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+  });
+
+export default function Transactions({ selectedAccountId = null }) {
   const [activeId, setActiveId] = useState(null);
+
   const toggleDropdown = (id) => {
     setActiveId((prevId) => (prevId === id ? null : id));
   };
 
+  const filteredData = selectedAccountId
+    ? transactionData.filter(
+        (t) => t.paymentMethod === accountIdToPaymentMethod[selectedAccountId],
+      )
+    : transactionData;
+
   return (
-    <div className="mt-4 flex flex-col">
-      <div className="flex flex-col gap-2 rounded-2xl bg-white/70 p-4">
+    <div className="mt-2 flex flex-col md:mt-4">
+      <div className="flex flex-col gap-2 rounded-2xl bg-white/70 p-3 md:p-4">
         <div>
           <div className="flex h-12 items-center text-lg font-bold text-gray-950">
             Today
           </div>
 
-          {/* Table Header Row */}
-          <div className="grid w-full grid-cols-12 px-3 py-2 text-xs font-semibold tracking-wider text-gray-500 uppercase">
+          {/* Table Header Row: Hidden completely on mobile viewports */}
+          <div className="hidden w-full grid-cols-12 px-3 py-2 text-xs font-semibold tracking-wider text-gray-500 uppercase md:grid">
             <div className="col-span-5">Details</div>
             <div className="col-span-3">Amount</div>
             <div className="col-span-2">Date</div>
@@ -77,100 +100,127 @@ export default function Transactions() {
 
           {/* Transaction Rows Container */}
           <div className="flex flex-col gap-2">
-            {transactionData.map((data) => {
-              const isExpense = data.amount < 0;
-              const isOpen = activeId === data.id;
+            {filteredData.length === 0 ? (
+              <p className="p-4 text-sm text-gray-500">
+                No transactions found for this account.
+              </p>
+            ) : (
+              filteredData.map((data) => {
+                const isExpense = data.amount < 0;
+                const isOpen = activeId === data.id;
+                const panelId = `transaction-panel-${data.id}`;
 
-              const formattedDate = new Date(data.date).toLocaleDateString(
-                "en-US",
-                {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                },
-              );
+                const formattedDate = new Date(data.date).toLocaleDateString(
+                  "en-US",
+                  {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  },
+                );
 
-              return (
-                <div
-                  key={data.id}
-                  className="overflow-hidden rounded-xl bg-white shadow-xs transition-all duration-200"
-                >
-                  {/* Clickable Master Header Row - Locked directly to 12-column matrix bounds */}
-                  <button
-                    onClick={() => toggleDropdown(data.id)}
-                    className="grid w-full cursor-pointer grid-cols-12 items-center gap-2 p-3.5 text-left transition hover:bg-gray-50/80"
+                return (
+                  <div
+                    key={data.id}
+                    className="overflow-hidden rounded-xl bg-white shadow-xs transition-all duration-200"
                   >
-                    {/* Column 1: Details (5 Columns) */}
-                    <div className="col-span-5 flex min-w-0 items-center gap-3">
-                      <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full border border-gray-100 bg-gray-50">
-                        <img
-                          className="h-full w-full object-cover"
-                          src={data.image}
-                          alt={data.description}
-                        />
-                      </div>
-                      <div className="flex min-w-0 flex-col text-left">
-                        <p className="truncate leading-tight font-semibold text-gray-900">
-                          {data.description}
-                        </p>
-                        <p className="mt-0.5 truncate text-xs font-medium text-gray-400">
-                          {data.paymentMethod}
-                        </p>
-                      </div>
-                    </div>
+                    {/* Master Button Component Wrapper: Shifts from list-card layout to tabular rows dynamically */}
+                    <button
+                      onClick={() => toggleDropdown(data.id)}
+                      aria-expanded={isOpen}
+                      aria-controls={panelId}
+                      className="flex w-full cursor-pointer flex-col gap-3 p-4 text-left transition hover:bg-gray-50/80 md:grid md:grid-cols-12 md:items-center md:gap-2 md:p-3.5"
+                    >
+                      {/* Column 1: Details Block Layout */}
+                      <div className="flex w-full min-w-0 items-center gap-3 md:col-span-5">
+                        <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full border border-gray-100 bg-gray-50">
+                          <img
+                            className="h-full w-full object-cover"
+                            src={data.image}
+                            alt={data.description}
+                          />
+                        </div>
+                        <div className="flex min-w-0 flex-1 flex-col text-left">
+                          <p className="truncate leading-tight font-semibold text-gray-900">
+                            {data.description}
+                          </p>
+                          <p className="mt-0.5 truncate text-xs font-medium text-gray-400">
+                            {data.paymentMethod}
+                          </p>
+                        </div>
 
-                    {/* Column 2: Amount (3 Columns) - Explicit grid alignment blocks text overlapping */}
-                    <div className="col-span-3 flex items-center">
-                      <span
-                        className={`inline-block rounded-md px-2 py-0.5 text-xs font-bold tracking-wide whitespace-nowrap ${isExpense ? "bg-red-50 text-red-700" : "bg-green-50 text-green-700"}`}
+                        {/* Mobile Badge: Visual display helper indicator for Date values */}
+                        <span className="text-[11px] font-medium text-gray-400 md:hidden">
+                          {formattedDate}
+                        </span>
+                      </div>
+
+                      {/* Mobile Breakpoint Horizontal Row Divider */}
+                      <div className="h-px w-full bg-gray-100 md:hidden" />
+
+                      {/* Pricing, Metric, and Balance Container Box */}
+                      <div className="flex w-full items-center justify-between md:col-span-7 md:grid md:grid-cols-7 md:gap-2">
+                        {/* Column 2: Amount (3 Columns on Desktop) */}
+                        <div className="flex items-center md:col-span-3">
+                          <span
+                            className={`inline-block rounded-md px-2 py-0.5 text-xs font-bold tracking-wide whitespace-nowrap ${
+                              isExpense
+                                ? "bg-red-50 text-red-700"
+                                : "bg-green-50 text-green-700"
+                            }`}
+                          >
+                            {isExpense ? "-" : "+"}
+                            {formatCurrency(data.amount)}
+                          </span>
+                        </div>
+
+                        {/* Column 3: Date (2 Columns on Desktop - Hidden on mobile context row) */}
+                        <div className="hidden text-xs font-semibold whitespace-nowrap text-gray-500 md:col-span-2 md:block">
+                          {formattedDate}
+                        </div>
+
+                        {/* Column 4: Balance Metric Label View */}
+                        <div className="text-right text-xs font-bold whitespace-nowrap text-gray-900 md:col-span-2 md:pr-1">
+                          <span className="mr-1 font-medium text-gray-400 md:hidden">
+                            Bal:
+                          </span>
+                          {data.currentBalance.toLocaleString("en-US", {
+                            style: "currency",
+                            currency: "USD",
+                          })}
+                        </div>
+                      </div>
+                    </button>
+
+                    {/* Dropdown Panel Content */}
+                    {isOpen && (
+                      <div
+                        id={panelId}
+                        className="animate-fadeIn border-t border-gray-100 bg-gray-50/50 p-4 text-xs text-gray-600"
                       >
-                        {isExpense ? "-" : "+"}
-                        {Math.abs(data.amount).toLocaleString("en-US", {
-                          style: "currency",
-                          currency: "USD",
-                        })}
-                      </span>
-                    </div>
-
-                    {/* Column 3: Date (2 Columns) - Locked text bounds */}
-                    <div className="col-span-2 text-xs font-semibold whitespace-nowrap text-gray-500">
-                      {formattedDate}
-                    </div>
-
-                    {/* Column 4: Balance (2 Columns) - Right Aligned cleanly */}
-                    <div className="col-span-2 pr-1 text-right text-xs font-bold whitespace-nowrap text-gray-900">
-                      {data.currentBalance.toLocaleString("en-US", {
-                        style: "currency",
-                        currency: "USD",
-                      })}
-                    </div>
-                  </button>
-
-                  {/* Dropdown Panel Content */}
-                  {isOpen && (
-                    <div className="animate-fadeIn border-t border-gray-100 bg-gray-50/50 p-4 text-xs text-gray-600">
-                      <p className="text-[10px] font-semibold tracking-wider text-gray-400 uppercase">
-                        Metadata Parameters
-                      </p>
-                      <div className="mt-2 grid grid-cols-2 gap-2 font-medium text-gray-700">
-                        <div>
-                          Transaction hash ID:{" "}
-                          <span className="font-mono text-gray-900">
-                            #TX-00{data.id}
-                          </span>
-                        </div>
-                        <div>
-                          Status:{" "}
-                          <span className="font-bold text-emerald-600">
-                            Settled Ledger
-                          </span>
+                        <p className="text-[10px] font-semibold tracking-wider text-gray-400 uppercase">
+                          Metadata Parameters
+                        </p>
+                        <div className="mt-2 grid grid-cols-1 gap-2 font-medium text-gray-700 sm:grid-cols-2">
+                          <div>
+                            Transaction hash ID:{" "}
+                            <span className="font-mono text-gray-900">
+                              #TX-00{data.id}
+                            </span>
+                          </div>
+                          <div>
+                            Status:{" "}
+                            <span className="font-bold text-emerald-600">
+                              Settled Ledger
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+                    )}
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
       </div>

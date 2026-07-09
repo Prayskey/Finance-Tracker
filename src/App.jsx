@@ -3,6 +3,7 @@ import Authenticate from "./pages/Authenticate";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import PageNotFound from "./pages/PageNotFound";
+import Settings from "./pages/Settings.jsx";
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
       <Route path="/" element={<Home />} />
       <Route path="/auth" element={<Authenticate />} />
       <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/settings" element={<Settings />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

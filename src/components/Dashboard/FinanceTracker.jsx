@@ -1,5 +1,6 @@
 import { ChevronDown, Menu, X } from "lucide-react";
 import { useState } from "react";
+import Settings from "../../pages/Settings.jsx";
 import Others from "./sections/Others.jsx";
 import Reports from "./sections/Reports.jsx";
 import Scheduler from "./sections/Scheduler.jsx";
@@ -27,6 +28,8 @@ export default function FinanceTracker({
         return <Reports />;
       case 3:
         return <Others />;
+      case 4:
+        return <Settings />;
       default:
         return <Transactions selectedAccountId={currentAccount} />;
     }
@@ -49,7 +52,7 @@ export default function FinanceTracker({
               Dashboard Sections
             </span>
             <button
-              onClick={() => setIsSubMenuOpen(!isSubMenuOpen)}
+              onClick={() => setIsSubMenuOpen((prev) => !prev)}
               className="rounded-md p-1.5 hover:bg-gray-200/50"
               aria-label="Toggle section navigation menu"
             >
@@ -63,22 +66,28 @@ export default function FinanceTracker({
 
           {/* Links Row Mapping Container */}
           <div
-            className={`${isSubMenuOpen ? "flex" : "hidden"} mt-2 flex-col gap-2 px-2 pb-2 md:mt-0 md:flex md:flex-row md:gap-4 md:p-0 lg:gap-8`}
+            role="tablist"
+            aria-label="Dashboard sections"
+            className={`${
+              isSubMenuOpen ? "flex" : "hidden"
+            } mt-2 flex-col gap-2 px-2 pb-2 md:mt-0 md:flex md:flex-row md:gap-4 md:p-0 lg:gap-8`}
           >
             {dashboardLinks.map((link, index) => {
               const isActive = currentSection === index;
               return (
-                <a
+                <button
                   key={link}
+                  role="tab"
+                  aria-selected={isActive}
                   onClick={() => handleLinkClick(index)}
-                  className={`relative cursor-pointer py-1.5 text-sm font-semibold transition-colors duration-300 after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:bg-blue-600 after:transition-[width] after:duration-300 after:content-[''] hover:text-blue-600 hover:after:w-full md:py-0 ${
+                  className={`relative cursor-pointer py-1.5 text-left text-sm font-semibold transition-colors duration-300 after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:bg-blue-600 after:transition-[width] after:duration-300 after:content-[''] hover:text-blue-600 hover:after:w-full md:py-0 ${
                     isActive
                       ? "text-blue-600 after:w-full"
                       : "text-gray-700 after:w-0"
                   }`}
                 >
                   {link}
-                </a>
+                </button>
               );
             })}
           </div>
@@ -89,10 +98,10 @@ export default function FinanceTracker({
           <div className="flex items-center gap-3">
             <img
               src={profilePictureUrl}
-              alt="Profile Picture"
+              alt="Profile"
               className="h-8 w-8 rounded-full bg-gray-200 object-cover"
             />
-            <p className="text-sm font-medium text-gray-800 md:block">
+            <p className="text-sm font-medium text-gray-800">
               Prayskey Ogbonna
             </p>
           </div>
