@@ -1,6 +1,6 @@
-import { ChevronDown, Menu, X } from "lucide-react";
-import { useState } from "react";
-import Settings from "../../pages/Settings.jsx";
+import { ChevronDown, LogOut, Menu, Settings as SettingsIcon, User, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import Others from "./sections/Others.jsx";
 import Reports from "./sections/Reports.jsx";
 import Scheduler from "./sections/Scheduler.jsx";
@@ -17,6 +17,21 @@ export default function FinanceTracker({
   currentAccount,
 }) {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef(null);
+
+  useEffect(() => {
+    if (!isProfileMenuOpen) return;
+
+    const handleClickOutside = (e) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(e.target)) {
+        setIsProfileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isProfileMenuOpen]);
 
   const renderSection = () => {
     switch (currentSection) {
@@ -28,8 +43,6 @@ export default function FinanceTracker({
         return <Reports />;
       case 3:
         return <Others />;
-      case 4:
-        return <Settings />;
       default:
         return <Transactions selectedAccountId={currentAccount} />;
     }
@@ -38,6 +51,11 @@ export default function FinanceTracker({
   const handleLinkClick = (index) => {
     setCurrentSection(index);
     setIsSubMenuOpen(false); // Close mobile toggle state automatically
+  };
+
+  const handleLogout = () => {
+    setIsProfileMenuOpen(false);
+    // TODO: clear auth session/token and redirect to /login once auth is wired up
   };
 
   return (
@@ -94,18 +112,76 @@ export default function FinanceTracker({
         </div>
 
         {/* Right User Profile Identifier Context */}
-        <div className="flex h-12 items-center justify-between rounded-md bg-white/50 px-4 py-2 md:h-full md:min-w-16 md:shrink-0 md:justify-start md:gap-3">
-          <div className="flex items-center gap-3">
-            <img
-              src={profilePictureUrl}
-              alt="Profile"
-              className="h-8 w-8 rounded-full bg-gray-200 object-cover"
+        <div className="relative" ref={profileMenuRef}>
+          <button
+            onClick={() => setIsProfileMenuOpen((prev) => !prev)}
+            aria-haspopup="menu"
+            aria-expanded={isProfileMenuOpen}
+            className="flex h-12 w-full items-center justify-between rounded-md bg-white/50 px-4 py-2 transition hover:bg-white/80 md:h-full md:min-w-16 md:shrink-0 md:justify-start md:gap-3"
+          >
+            <div className="flex items-center gap-3">
+              <img
+                src={profilePictureUrl}
+                alt="Profile"
+                className="h-8 w-8 rounded-full bg-gray-200 object-cover"
+              />
+              <p className="text-sm font-medium text-gray-800">
+                Prayskey Ogbonna
+              </p>
+            </div>
+            <ChevronDown
+              className={`h-4 w-4 text-gray-500 transition-transform duration-200 ${
+                isProfileMenuOpen ? "rotate-180" : ""
+              }`}
             />
-            <p className="text-sm font-medium text-gray-800">
-              Prayskey Ogbonna
-            </p>
-          </div>
-          <ChevronDown className="h-4 w-4 text-gray-500" />
+          </button>
+
+          {/* Profile Dropdown Menu */}
+          {isProfileMenuOpen && (
+            <div
+              role="menu"
+              className="animate-fadeIn absolute top-full right-0 z-20 mt-1 w-56 rounded-xl border border-gray-200 bg-white p-1.5 shadow-lg"
+            >
+              <div className="border-b border-gray-100 px-3 py-2">
+                <p className="text-sm font-semibold text-gray-900">
+                  Prayskey Ogbonna
+                </p>
+                {/* TODO: replace with real user email once auth is wired up */}
+                <p className="truncate text-xs text-gray-400">
+                  prayskey@example.com
+                </p>
+              </div>
+
+              <Link
+                to="/settings"
+                onClick={() => setIsProfileMenuOpen(false)}
+                role="menuitem"
+                className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                <User className="h-4 w-4 text-gray-400" />
+                View Profile
+              </Link>
+
+              <Link
+                to="/settings"
+                onClick={() => setIsProfileMenuOpen(false)}
+                role="menuitem"
+                className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                <SettingsIcon className="h-4 w-4 text-gray-400" />
+                Settings
+              </Link>
+
+              <button
+                onClick={handleLogout}
+                role="menuitem"
+                className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50"
+              >
+                <LogOut className="h-4 w-4" />
+                Log Out
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

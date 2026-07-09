@@ -5,6 +5,7 @@ import {
   Shield,
   Wallet,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function Home() {
   return (
@@ -29,13 +30,13 @@ export default function Home() {
         </div>
 
         {/* Global Action Interface Trigger Link */}
-        <a
-          href="/dashboard"
+        <Link
+          to="/dashboard"
           className="group flex items-center gap-2 rounded-xl bg-gray-950 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 active:scale-[0.98]"
         >
-          <span>Open Workspace Workspace</span>
+          <span>Open Workspace</span>
           <ArrowRight className="h-4 w-4 text-gray-400 transition-transform group-hover:translate-x-0.5 group-hover:text-white" />
-        </a>
+        </Link>
 
         {/* Secondary Informational Grid Blocks */}
         <div className="mt-8 grid w-full grid-cols-1 gap-4 border-t border-gray-200/60 pt-8 sm:grid-cols-3">
