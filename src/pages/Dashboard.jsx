@@ -3,13 +3,14 @@ import FinanceTracker from "../components/Dashboard/FinanceTracker";
 import Navbar from "../components/Dashboard/Navbar";
 
 export default function Dashboard() {
-  // 1. Lift state up to manage global dashboard selections
-  const [currentSection, setCurrentSection] = useState(0); // Tracks Active Tab Index
-  const [currentAccount, setCurrentAccount] = useState(null); // Tracks Selected Account ID
+  // Tracks Active Tab Index
+  const [currentSection, setCurrentSection] = useState(0);
+  // Tracks Selected Account ID
+  const [currentAccount, setCurrentAccount] = useState(null);
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-gray-100/50 text-sm text-gray-900 antialiased">
-      {/* 2. Pass state handlers and values into Sidebar */}
+    <div className="flex h-auto min-h-screen w-full flex-col bg-gray-100/50 text-sm text-gray-900 antialiased md:h-screen md:flex-row md:overflow-hidden">
+      {/* Sidebar navigation component handles mobile top-bar swap natively */}
       <Navbar
         currentSection={currentSection}
         setCurrentSection={setCurrentSection}
@@ -17,9 +18,8 @@ export default function Dashboard() {
         setCurrentAccount={setCurrentAccount}
       />
 
-      {/* Main Content Workspace */}
-      <main className="flex h-full min-w-0 flex-1 flex-col overflow-y-auto">
-        {/* 3. Pass states down into Workspace to automatically filter list view displays */}
+      {/* Main Content Workspace viewport wrapper container */}
+      <main className="flex h-auto min-w-0 flex-1 flex-col md:h-full md:overflow-y-auto">
         <FinanceTracker
           currentSection={currentSection}
           setCurrentSection={setCurrentSection}
