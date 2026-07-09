@@ -1,17 +1,44 @@
+import { useState } from "react";
 import {
   ArrowRight,
   ArrowUpRight,
   BarChart3,
   Shield,
   Wallet,
+  LogIn,
+  LogOut,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function Home() {
+  // Simulated frontend authentication state
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   return (
-    <div className="flex min-h-screen w-full flex-col items-center justify-center bg-linear-to-b from-gray-50 to-gray-100/50 p-6 text-gray-900 antialiased">
+    <div className="relative flex min-h-screen w-full flex-col items-center justify-center bg-linear-to-b from-gray-50 to-gray-100/50 p-6 text-gray-900 antialiased">
+      {/* Top Header Authentication Bar */}
+      <header className="absolute top-0 right-0 left-0 mx-auto flex w-full max-w-7xl items-center justify-end p-6">
+        {isLoggedIn ? (
+          <button
+            onClick={() => setIsLoggedIn(false)}
+            className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 active:scale-[0.98]"
+          >
+            <LogOut className="h-4 w-4 text-gray-500" />
+            <span>Sign Out</span>
+          </button>
+        ) : (
+          <Link
+            to="/auth"
+            className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 active:scale-[0.98]"
+          >
+            <LogIn className="h-4 w-4 text-gray-500" />
+            <span>Sign In</span>
+          </Link>
+        )}
+      </header>
+
       {/* Structural Card Container */}
-      <div className="flex w-full max-w-3xl flex-col items-center gap-6 rounded-3xl border border-white/60 bg-white/40 px-6 py-12 text-center shadow-xl backdrop-blur-md">
+      <div className="mt-12 flex w-full max-w-3xl flex-col items-center gap-6 rounded-3xl border border-white/60 bg-white/40 px-6 py-12 text-center shadow-xl backdrop-blur-md">
         {/* Main Badge Logo Metric */}
         <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-md shadow-blue-500/20">
           <Wallet className="h-7 w-7" />
@@ -30,11 +57,12 @@ export default function Home() {
         </div>
 
         {/* Global Action Interface Trigger Link */}
+        {/* Dynamically routes to /dashboard if logged in, otherwise routes to /auth */}
         <Link
-          to="/dashboard"
+          to={isLoggedIn ? "/dashboard" : "/auth"}
           className="group flex items-center gap-2 rounded-xl bg-gray-950 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 active:scale-[0.98]"
         >
-          <span>Open Workspace</span>
+          <span>{isLoggedIn ? "Open Workspace" : "Get Started"}</span>
           <ArrowRight className="h-4 w-4 text-gray-400 transition-transform group-hover:translate-x-0.5 group-hover:text-white" />
         </Link>
 
