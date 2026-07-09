@@ -59,7 +59,7 @@ export default function Home() {
         {/* Global Action Interface Trigger Link */}
         {/* Dynamically routes to /dashboard if logged in, otherwise routes to /auth */}
         <Link
-          to={isLoggedIn ? "/dashboard" : "/auth"}
+          to={isLoggedIn ? "/dashboard" : "/dashboard"}
           className="group flex items-center gap-2 rounded-xl bg-gray-950 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 active:scale-[0.98]"
         >
           <span>{isLoggedIn ? "Open Workspace" : "Get Started"}</span>
