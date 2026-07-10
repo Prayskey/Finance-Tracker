@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 
 export default function Home() {
   // Simulated frontend authentication state
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   return (
     <div className="relative flex min-h-screen w-full flex-col items-center justify-center bg-linear-to-b from-gray-50 to-gray-100/50 p-6 text-gray-900 antialiased">
@@ -20,7 +20,7 @@ export default function Home() {
       <header className="absolute top-0 right-0 left-0 mx-auto flex w-full max-w-7xl items-center justify-end p-6">
         {isLoggedIn ? (
           <button
-            onClick={() => setIsLoggedIn(true)}
+            onClick={() => setIsLoggedIn(false)}
             className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50 active:scale-[0.98]"
           >
             <LogOut className="h-4 w-4 text-gray-500" />
@@ -59,7 +59,7 @@ export default function Home() {
         {/* Global Action Interface Trigger Link */}
         {/* Dynamically routes to /dashboard if logged in, otherwise routes to /auth */}
         <Link
-          to={isLoggedIn ? "/dashboard" : "/dashboard"}
+          to={isLoggedIn ? "/dashboard" : "/auth"}
           className="group flex items-center gap-2 rounded-xl bg-gray-950 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 active:scale-[0.98]"
         >
           <span>{isLoggedIn ? "Open Workspace" : "Get Started"}</span>
