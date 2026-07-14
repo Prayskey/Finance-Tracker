@@ -1,4 +1,11 @@
-import { ChevronDown, LogOut, Menu, Settings as SettingsIcon, User, X } from "lucide-react";
+import {
+  ChevronDown,
+  LogOut,
+  Menu,
+  Settings as SettingsIcon,
+  User,
+  X,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Others from "./sections/Others.jsx";
@@ -24,7 +31,10 @@ export default function FinanceTracker({
     if (!isProfileMenuOpen) return;
 
     const handleClickOutside = (e) => {
-      if (profileMenuRef.current && !profileMenuRef.current.contains(e.target)) {
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(e.target)
+      ) {
         setIsProfileMenuOpen(false);
       }
     };
@@ -186,9 +196,7 @@ export default function FinanceTracker({
       </div>
 
       {/* Conditionally rendered section body wrapper */}
-      <div className="flex-1 rounded-xl bg-white/40 p-2 md:p-0">
-        {renderSection()}
-      </div>
+      {renderSection()}
     </section>
   );
 }

@@ -1,3 +1,4 @@
+import { Clock } from "lucide-react";
 import { useState } from "react";
 
 const transactionData = [
@@ -5,7 +6,7 @@ const transactionData = [
     id: 1,
     description: "Grocery Shopping",
     amount: -150.0,
-    date: "2023-10-15",
+    date: "2026-07-14T14:30:00",
     paymentMethod: "Credit Card",
     currentBalance: 500.0,
     image:
@@ -15,7 +16,7 @@ const transactionData = [
     id: 2,
     description: "Electricity Bill",
     amount: -75.5,
-    date: "2023-10-12",
+    date: "2026-07-14T12:15:00",
     paymentMethod: "Bank Transfer",
     currentBalance: 425.0,
     image:
@@ -25,7 +26,7 @@ const transactionData = [
     id: 3,
     description: "Restaurant Dinner",
     amount: -60.0,
-    date: "2023-10-10",
+    date: "2026-07-14T09:23:00",
     paymentMethod: "Cash",
     currentBalance: 365.0,
     image:
@@ -35,7 +36,7 @@ const transactionData = [
     id: 4,
     description: "Beverages",
     amount: -30.0,
-    date: "2023-10-10",
+    date: "2026-07-14T09:00:00",
     paymentMethod: "Bank Transfer",
     currentBalance: 335.0,
     image:
@@ -45,7 +46,7 @@ const transactionData = [
     id: 5,
     description: "Forex",
     amount: 100.14,
-    date: "2023-10-10",
+    date: "2026-07-14T08:30:00",
     paymentMethod: "Bank Transfer",
     currentBalance: 435.14,
     image:
@@ -53,9 +54,6 @@ const transactionData = [
   },
 ];
 
-// Maps sidebar account IDs (Navbar.jsx) to matching payment methods.
-// TODO: replace with a real accountId field on each transaction once
-// the backend model exists — matching on paymentMethod string is fragile.
 const accountIdToPaymentMethod = {
   1: "Cash",
   2: "Credit Card",
@@ -84,22 +82,12 @@ export default function Transactions({ selectedAccountId = null }) {
 
   return (
     <div className="mt-2 flex flex-col md:mt-4">
-      <div className="flex flex-col gap-2 rounded-2xl bg-white/70 p-3 md:p-4">
-        <div>
-          <div className="flex h-12 items-center text-lg font-bold text-gray-950">
-            Today
+      <div className="flex flex-col gap-2 rounded-md bg-white/70 p-2 md:p-3">
+        <div className="space-y-0.5">
+          <div className="flex h-8 items-center text-lg font-bold text-gray-950 border-b border-b-gray-300">
+            <span className="font-medium text-gray-400 text-xs">TODAY</span>
           </div>
-
-          {/* Table Header Row: Hidden completely on mobile viewports */}
-          <div className="hidden w-full grid-cols-12 px-3 py-2 text-xs font-semibold tracking-wider text-gray-500 uppercase md:grid">
-            <div className="col-span-5">Details</div>
-            <div className="col-span-3">Amount</div>
-            <div className="col-span-2">Date</div>
-            <div className="col-span-2 text-right">Balance</div>
-          </div>
-
-          {/* Transaction Rows Container */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1">
             {filteredData.length === 0 ? (
               <p className="p-4 text-sm text-gray-500">
                 No transactions found for this account.
@@ -110,19 +98,19 @@ export default function Transactions({ selectedAccountId = null }) {
                 const isOpen = activeId === data.id;
                 const panelId = `transaction-panel-${data.id}`;
 
-                const formattedDate = new Date(data.date).toLocaleDateString(
-                  "en-US",
+                const formattedTime = new Date(data.date).toLocaleTimeString(
+                  [],
                   {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
                   },
                 );
 
                 return (
                   <div
                     key={data.id}
-                    className="overflow-hidden rounded-xl bg-white shadow-xs transition-all duration-200"
+                    className="overflow-hidden rounded-md bg-white shadow-xs transition-all duration-200"
                   >
                     {/* Master Button Component Wrapper: Shifts from list-card layout to tabular rows dynamically */}
                     <button
@@ -148,10 +136,10 @@ export default function Transactions({ selectedAccountId = null }) {
                             {data.paymentMethod}
                           </p>
                         </div>
-
                         {/* Mobile Badge: Visual display helper indicator for Date values */}
-                        <span className="text-[11px] font-medium text-gray-400 md:hidden">
-                          {formattedDate}
+                        <span className="flex items-center gap-1 text-[11px] font-medium text-gray-400 md:hidden">
+                          <Clock className="h-3.5 w-3.5" />
+                          <span>{formattedTime}</span>
                         </span>
                       </div>
 
@@ -175,8 +163,9 @@ export default function Transactions({ selectedAccountId = null }) {
                         </div>
 
                         {/* Column 3: Date (2 Columns on Desktop - Hidden on mobile context row) */}
-                        <div className="hidden text-xs font-semibold whitespace-nowrap text-gray-500 md:col-span-2 md:block">
-                          {formattedDate}
+                        <div className="hidden text-xs font-semibold whitespace-nowrap text-gray-500 md:col-span-2 md:flex md:items-center md:gap-1.5">
+                          <Clock className="h-3.5 w-3.5" />
+                          <span>{formattedTime}</span>
                         </div>
 
                         {/* Column 4: Balance Metric Label View */}
@@ -193,10 +182,22 @@ export default function Transactions({ selectedAccountId = null }) {
                     </button>
 
                     {/* Dropdown Panel Content */}
-                    {isOpen && (
+                    <div
+                      id={panelId}
+                      className="grid border-t border-gray-100 bg-gray-50/50 text-xs text-gray-600 transition-all duration-100 ease-in-out"
+                      style={{
+                        gridTemplateRows: isOpen ? "1fr" : "0fr",
+                        opacity: isOpen ? 1 : 0,
+                      }}
+                    >
                       <div
-                        id={panelId}
-                        className="animate-fadeIn border-t border-gray-100 bg-gray-50/50 p-4 text-xs text-gray-600"
+                        className="min-h-0 overflow-hidden transition-all duration-300 ease-in-out"
+                        style={{
+                          paddingTop: isOpen ? "1rem" : "0px",
+                          paddingBottom: isOpen ? "1rem" : "0px",
+                          paddingLeft: "1rem",
+                          paddingRight: "1rem",
+                        }}
                       >
                         <p className="text-[10px] font-semibold tracking-wider text-gray-400 uppercase">
                           Metadata Parameters
@@ -216,7 +217,7 @@ export default function Transactions({ selectedAccountId = null }) {
                           </div>
                         </div>
                       </div>
-                    )}
+                    </div>
                   </div>
                 );
               })

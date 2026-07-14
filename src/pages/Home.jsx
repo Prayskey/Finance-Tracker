@@ -1,18 +1,18 @@
-import { useState } from "react";
 import {
   ArrowRight,
   ArrowUpRight,
   BarChart3,
-  Shield,
-  Wallet,
   LogIn,
   LogOut,
+  Shield,
+  Wallet,
 } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function Home() {
   // Simulated frontend authentication state
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
     <div className="relative flex min-h-screen w-full flex-col items-center justify-center bg-linear-to-b from-gray-50 to-gray-100/50 p-6 text-gray-900 antialiased">
